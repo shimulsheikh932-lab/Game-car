@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>
+      Cyber Horizon 3D - Racing With Techpk
+    </title>
+    <style>
+      /* Fullscreen Viewport & Reset */
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #04060e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    #cyber-game-root {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      height: var(--cg-app-h, 100dvh);
+      overflow: hidden;
+      background: #04060e;
+    }
+    #cyber-game-root * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    #cyber-game-root canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      outline: none;
+    }
+
+    /* Top Banner Bar */
+    #ad-top-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 52px;
+      background: rgba(8, 10, 20, 0.92);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 40;
+      overflow: hidden;
+    }
+    .ad-placeholder-banner {
+      width: 100%;
+      max-width: 728px;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #94a3b8;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: linear-gradient(90deg, rgba(0, 240, 255, 0.05), rgba(255, 0, 119, 0.05));
+    }
+    .ad-tag-badge {
+      background: #ff0077;
+      color: #fff;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-right: 8px;
+      font-weight: 800;
+    }
+
+    /* HUD Header */
+    #cg-hud {
+      position: absolute;
+      top: 56px;
+      left: 0;
+      width: 100%;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .cg-badge {
+      background: rgba(10, 14, 28, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 10px;
+      padding: 6px 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 240, 255, 0.08);
+      color: #fff;
+    }
+    .cg-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #00f0ff;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .cg-val {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'Consolas', 'Courier New', monospace;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+
+    /* Lives Hearts */
+    #cg-lives-box {
+      display: flex;
+      gap: 3px;
+      font-size: 16px;
+      color: #ff0055;
+      text-shadow: 0 0 8px #ff0055;
+    }
+
+    /* Center Level & Speed */
+    #cg-center-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .cg-speed-num {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ff0077;
+      text-shadow: 0 0 14px rgba(255, 0, 119, 0.8);
+      line-height: 1;
+    }
+    .cg-speed-unit {
+      font-size: 9px;
+      color: #94a3b8;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+    .cg-level-pill {
+      background: linear-gradient(90deg, #00f0ff, #0077ff);
+      color: #04060e;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+
+    /* Nitro Fuel Bar */
+    #cg-nitro-panel {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      pointer-events: none;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .cg-nitro-txt {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #00f0ff;
+      text-shadow: 0 0 8px #00f0ff;
+      margin-bottom: 4px;
+    }
+    .cg-nitro-bar-outer {
+      width: 100%;
+      height: 11px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #00f0ff;
+      border-radius: 6px;
+      padding: 1px;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+    }
+    #cg-nitro-bar-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #0077ff, #00f0ff, #ffffff);
+      border-radius: 4px;
+      box-shadow: 0 0 10px #00f0ff;
+      transition: width 0.08s linear;
+    }
+
+    /* Notifications & Level Up Banner */
+    #cg-popup {
+      position: absolute;
+      top: 32%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      color: #ffea00;
+      font-size: 26px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 16px rgba(255, 234, 0, 0.9), 2px 2px 0 #000;
+      pointer-events: none;
+      z-index: 25;
+      transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s;
+      opacity: 0;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* Audio & Fullscreen Buttons */
+    #cg-top-btns {
+      position: absolute;
+      top: 64px;
+      right: 14px;
+      display: flex;
+      gap: 8px;
+      z-index: 30;
+    }
+    .cg-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, transform 0.2s;
+      outline: none;
+    }
+    .cg-icon-btn:hover {
+      background: rgba(0, 240, 255, 0.4);
+      border-color: #00f0ff;
+      transform: scale(1.08);
+    }
+
+    /* Mobile Controls */
+    #cg-mobile-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      padding: 0 20px;
+      display: none;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 25;
+    }
+    .cg-touch-group {
+      display: flex;
+      gap: 14px;
+      pointer-events: auto;
+    }
+    .cg-touch-btn {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.75);
+      border: 2px solid rgba(0, 240, 255, 0.5);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .cg-touch-btn:active, .cg-touch-btn.active-touch {
+      background: rgba(0, 240, 255, 0.45);
+      border-color: #00f0ff;
+      transform: scale(0.92);
+    }
+    .cg-btn-nitro {
+      border-color: #ff0077;
+      color: #ff0077;
+    }
+    .cg-btn-nitro:active, .cg-btn-nitro.active-touch {
+      background: rgba(255, 0, 119, 0.5);
+      border-color: #ff0077;
+    }
+
+    /* Overlays (Start Menu & Game Over) */
+    .cg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(14, 18, 35, 0.94) 0%, rgba(4, 6, 14, 0.98) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 35;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .cg-overlay.cg-hidden {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      z-index: -10;
+    }
+
+    .cg-title {
+      font-size: 38px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-align: center;
+      background: linear-gradient(45deg, #00f0ff 0%, #ff0077 50%, #ffea00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 3px;
+      filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.6));
+    }
+    .cg-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .cg-difficulty-badge {
+      background: rgba(0, 255, 136, 0.15);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 15px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    /* Car Color Picker */
+    .cg-color-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .cg-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .cg-dot:hover {
+      transform: scale(1.15);
+    }
+    .cg-dot.selected {
+      border-color: #fff;
+      transform: scale(1.25);
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    /* Action Buttons */
+    .cg-btn-play {
+      background: linear-gradient(135deg, #00f0ff 0%, #0077ff 100%);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 13px 40px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.55);
+      transition: all 0.25s ease;
+      outline: none;
+    }
+    .cg-btn-play:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.85);
+    }
+
+    /* Adsterra Rectangle 300x250 Ad Container */
+    #ad-gameover-slot {
+      width: 300px;
+      min-height: 250px;
+      margin: 12px auto 16px auto;
+      background: rgba(13, 17, 32, 0.85);
+      border: none;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .ad-slot-tag {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      background: rgba(255, 0, 119, 0.85);
+      color: #fff;
+      font-size: 8px;
+      font-weight: bold;
+      padding: 2px 5px;
+      border-radius: 3px;
+      z-index: 5;
+    }
+
+    .cg-keys-guide {
+      display: flex;
+      gap: 16px;
+      margin-top: 18px;
+      color: #94a3b8;
+      font-size: 11px;
+    }
+    .cg-k-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cg-key {
+      background: #1e293b;
+      border: 1px solid #475569;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    /* Shield Active Pill */
+    #cg-shield-indicator {
+      position: absolute;
+      top: 130px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 255, 136, 0.22);
+      border: 1px solid #00ff88;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #00ff88;
+      letter-spacing: 1px;
+      display: none;
+      animation: cgPulseShield 1s infinite alternate;
+      z-index: 20;
+    }
+    @keyframes cgPulseShield {
+      from { box-shadow: 0 0 5px #00ff88; }
+      to { box-shadow: 0 0 20px #00ff88; }
+    }
+
+    /* Speed Tunnel Vignette */
+    #cg-vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-shadow: inset 0 0 100px rgba(0, 240, 255, 0);
+      transition: box-shadow 0.2s ease;
+      z-index: 5;
+    }
+    #cg-vignette.nitro-on {
+      box-shadow: inset 0 0 140px rgba(0, 240, 255, 0.45), inset 0 0 60px rgba(255, 0, 119, 0.35);
+    }
+
+    /* Screen Shake */
+    .cg-shake {
+      animation: cgShakeAnim 0.45s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes cgShakeAnim {
+      10%, 90% { transform: translate3d(-2px, 2px, 0); }
+      20%, 80% { transform: translate3d(3px, -2px, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 4px, 0); }
+      40%, 60% { transform: translate3d(5px, -4px, 0); }
+    }
+
+    @media (max-width: 640px) {
+      .cg-title { font-size: 26px; }
+      .cg-val { font-size: 18px; }
+      .cg-speed-num { font-size: 26px; }
+      #cg-mobile-controls { display: flex; }
+      .cg-keys-guide { display: none; }
+      #ad-top-wrapper { height: 48px; }
+      #cg-hud { top: 52px; }
+      #cg-top-btns { top: 56px; }
+    }
+  
+    /* ===== META UI ===== */
+    .cg-overlay > * { flex-shrink:0; }
+    #ad-top-wrapper { display:none !important; }
+    #ad-gameover-slot iframe { width:300px; height:250px; border:0; display:block; }
+    .cg-overlay { overflow-y: auto; justify-content: safe center; padding: 24px 12px; box-sizing: border-box; }
+    #cg-btn-restart, #cg-btn-start { margin-top: 6px; }
+    .ch-wallet { display:inline-flex; align-items:center; gap:6px; background:rgba(255,204,0,.12); border:1px solid rgba(255,204,0,.5); color:#ffd84d; font-weight:800; padding:5px 14px; border-radius:30px; font-size:15px; margin:4px 0 10px; }
+    #ch-hud-wallet { position:absolute; top:84px; left:50%; transform:translateX(-50%); z-index:20; font-size:12px; padding:3px 10px; pointer-events:none; }
+    .ch-menu { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:12px 0 4px; width:min(440px,94vw); }
+    .ch-menu button { position:relative; background:rgba(15,23,42,.85); border:1px solid rgba(0,240,255,.35); color:#e2e8f0; border-radius:14px; padding:9px 2px 7px; font-size:20px; cursor:pointer; font-weight:700; transition:.2s; }
+    .ch-menu button small { display:block; font-size:9px; letter-spacing:1px; margin-top:3px; color:#94a3b8; }
+    .ch-menu button:hover { border-color:#00f0ff; box-shadow:0 0 14px rgba(0,240,255,.4); transform:translateY(-2px); }
+    .ch-dot { display:none; position:absolute; top:5px; right:7px; width:9px; height:9px; border-radius:50%; background:#ff0055; box-shadow:0 0 8px #ff0055; animation:chPulse 1s infinite; }
+    @keyframes chPulse { 50% { transform:scale(1.4); } }
+    #ch-panel { position:absolute; inset:0; z-index:60; background:rgba(3,5,12,.82); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; }
+    #ch-panel.open { display:flex; }
+    .ch-box { width:min(560px,96vw); max-height:92vh; display:flex; flex-direction:column; background:linear-gradient(160deg,#0d1326,#070a16); border:1px solid rgba(0,240,255,.35); border-radius:20px; box-shadow:0 0 40px rgba(0,240,255,.2); color:#e2e8f0; overflow:hidden; }
+    .ch-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px 6px; }
+    .ch-head .ch-wallet { margin:0; }
+    #ch-panel-close { background:none; border:1px solid #334155; color:#e2e8f0; width:34px; height:34px; border-radius:50%; font-size:16px; cursor:pointer; }
+    .ch-tabs { display:flex; gap:4px; padding:4px 10px 8px; overflow-x:auto; }
+    .ch-tab { flex:1; white-space:nowrap; background:transparent; border:1px solid #1e293b; color:#94a3b8; padding:8px 6px; border-radius:10px; font-size:11px; font-weight:800; letter-spacing:1px; cursor:pointer; }
+    .ch-tab.act { background:linear-gradient(135deg,#00f0ff,#0077ff); color:#001; border-color:transparent; }
+    #ch-panel-body { overflow-y:auto; padding:6px 12px 16px; }
+    #ch-panel-body h4 { margin:10px 2px 8px; font-size:13px; letter-spacing:1px; color:#00f0ff; }
+    #ch-panel-body h4 small { color:#64748b; font-weight:400; }
+    .ch-card { display:flex; align-items:center; gap:10px; background:rgba(15,23,42,.8); border:1px solid #1e293b; border-radius:14px; padding:10px; margin-bottom:8px; }
+    .ch-card.sel { border-color:#00ff88; box-shadow:0 0 14px rgba(0,255,136,.25); }
+    .ch-card-main { flex:1; min-width:0; }
+    .ch-card-main b { display:block; font-size:14px; }
+    .ch-card-main small { display:block; color:#94a3b8; font-size:11px; margin-top:2px; }
+    .ch-card-main b small { display:inline; color:#00f0ff; }
+    .ch-car-sw { width:46px; height:26px; border-radius:8px 14px 6px 6px; flex-shrink:0; }
+    .ch-map-sw { width:54px; height:44px; border-radius:10px; flex-shrink:0; display:flex; align-items:flex-start; justify-content:center; font-size:18px; padding-top:2px; box-sizing:border-box; }
+    .ch-ic { font-size:24px; width:40px; text-align:center; flex-shrink:0; }
+    .ch-stats { display:grid; grid-template-columns:auto 1fr auto 1fr; gap:3px 6px; align-items:center; margin-top:5px; font-size:9px; color:#64748b; }
+    .ch-stats span:last-child { grid-column:span 2; color:#e2e8f0; }
+    .ch-stat { height:5px; background:#1e293b; border-radius:4px; overflow:hidden; margin-top:4px; }
+    .ch-stats .ch-stat { margin:0; }
+    .ch-stat i { display:block; height:100%; background:linear-gradient(90deg,#00f0ff,#00ff88); }
+    .ch-pips { display:flex; gap:4px; margin-top:6px; }
+    .ch-pips i { flex:1; height:6px; border-radius:3px; background:#1e293b; }
+    .ch-pips i.f { background:linear-gradient(90deg,#ffcc00,#ff7a00); box-shadow:0 0 6px #ffaa00; }
+    .ch-btn { background:#1e293b; color:#e2e8f0; border:1px solid #334155; border-radius:10px; padding:8px 10px; font-weight:800; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+    .ch-btn.buy { background:linear-gradient(135deg,#ffcc00,#ff8a00); color:#1a0f00; border:none; }
+    .ch-btn.on { background:rgba(0,255,136,.12); color:#00ff88; border-color:#00ff88; }
+    .ch-btn:disabled { cursor:default; }
+    .ch-days { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+    .ch-day { text-align:center; background:rgba(15,23,42,.8); border:1px solid #1e293b; border-radius:10px; padding:5px 0; font-size:10px; font-weight:700; color:#ffd84d; }
+    .ch-day small { display:block; color:#64748b; }
+    .ch-day.got { background:rgba(0,255,136,.12); border-color:#00ff88; opacity:.7; }
+    .ch-day.now { border-color:#ffcc00; box-shadow:0 0 12px rgba(255,204,0,.5); animation:chPulse 1.2s infinite; }
+    .ch-wide { display:block; width:100%; margin:10px 0 4px; padding:12px; font-size:15px; }
+    .ch-note { color:#94a3b8; font-size:12px; text-align:center; margin:8px 0; }
+    .ch-name-row { display:flex; gap:8px; }
+    .ch-name-row input { flex:1; background:#0b1220; border:1px solid #334155; color:#fff; border-radius:10px; padding:10px; font-size:14px; outline:none; }
+    .ch-lb { display:flex; align-items:center; gap:10px; padding:8px 10px; border-bottom:1px solid #1e293b; }
+    .ch-lb.me { background:rgba(0,240,255,.1); border-radius:10px; }
+    .ch-lb .rk { width:34px; text-align:center; font-weight:800; color:#94a3b8; }
+    .ch-lb .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+    .ch-lb .nm small { display:block; color:#64748b; font-size:10px; }
+    .ch-lb b { color:#00f0ff; }
+    #ch-flash { position:absolute; left:50%; bottom:16%; transform:translate(-50%,20px); background:#0f172a; border:1px solid #00f0ff; color:#fff; padding:10px 18px; border-radius:30px; font-weight:700; font-size:13px; z-index:80; opacity:0; pointer-events:none; transition:.25s; text-align:center; }
+    #ch-flash.show { opacity:1; transform:translate(-50%,0); }
+    #ch-earned { color:#ffd84d; font-weight:800; font-size:16px; margin:2px 0 8px; }
+
+    /* ===== MOBILE CONTROL FIX: buttons always inside the visible screen ===== */
+    #cg-mobile-controls {
+      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+      padding-left: calc(16px + env(safe-area-inset-left, 0px));
+      padding-right: calc(16px + env(safe-area-inset-right, 0px));
+      align-items: flex-end;
+    }
+    #cg-nitro-panel { bottom: calc(18px + env(safe-area-inset-bottom, 0px)); max-width: 80vw; }
+    body.cg-touch #cg-nitro-panel { width: min(260px, 70vw); }
+    body.cg-touch .cg-nitro-txt { font-size: 10px; }
+    /* Steering zones: touch left / right half of the screen to steer */
+    #cg-steer-zones { position:absolute; inset:0; z-index:15; display:none; }
+    body.cg-touch #cg-steer-zones { display:flex; }
+    #cg-steer-zones div { flex:1; touch-action:none; }
+    #cg-steer-hint { position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); z-index:16; pointer-events:none; color:#e2e8f0; font-size:12px; font-weight:800; letter-spacing:1px; text-align:center; background:rgba(10,14,28,.75); border:1px solid rgba(0,240,255,.4); border-radius:14px; padding:8px 14px; opacity:0; transition:opacity .4s; white-space:nowrap; }
+    #cg-steer-hint.show { opacity:1; }
+    @media (max-width: 640px) {
+      .cg-touch-btn { width: 62px; height: 62px; }
+      .cg-touch-group { gap: 10px; }
+      #cg-top-btns { top: 136px; }
+      #ch-hud-wallet { top: 140px; left: 18px; transform: none; }
+    }
+    @media (max-width: 360px) {
+      .cg-touch-btn { width: 54px; height: 54px; font-size: 18px; }
+    }
+    /* Landscape phones / short screens */
+    @media (max-height: 500px) {
+      #cg-mobile-controls { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+      .cg-touch-btn { width: 56px; height: 56px; }
+      #cg-nitro-panel { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); width: 200px; }
+      #cg-hud { top: 4px; padding: 6px 12px; }
+      #cg-top-btns { top: 70px; }
+      #ch-hud-wallet { top: 70px; left: 20px; transform: none; }
+      .cg-val { font-size: 16px; }
+      .cg-speed-num { font-size: 22px; }
+      #cg-shield-indicator { top: 80px; }
+    }
+  </style>
+    <!-- High Performance Three.js r128 Global CDN -->
+    <script>/* ===== CYBER HORIZON META: garage, upgrades, daily, missions, maps, leaderboard ===== */
+(function () {
+  'use strict';
+  const LB_URL = 'https://afkdxikpdwinvhsudafu.supabase.co/rest/v1/leaderboard';
+  const LB_KEY = 'sb_publishable_zP6SW6m6hueW_GZqPqieig_bk9A6Ie8';
+  const SAVE_KEY = 'ch_profile_v1';
+
+  const CARS = {
+    viper:   { name: 'Viper GT',    price: 0,     color: '#ff0044', scale: [1, 1, 1],       speed: 1.00, nitro: 1.00, steer: 1.00, lives: 3, desc: 'Balanced starter' },
+    bolt:    { name: 'Bolt R',      price: 1500,  color: '#00f0ff', scale: [0.92, 0.9, 0.95], speed: 1.04, nitro: 1.10, steer: 1.30, lives: 3, desc: 'Razor-sharp steering' },
+    titan:   { name: 'Titan X',     price: 4000,  color: '#ffea00', scale: [1.12, 1.15, 1.05], speed: 1.02, nitro: 1.00, steer: 0.95, lives: 4, desc: '4 lives, heavy armor' },
+    phantom: { name: 'Phantom S',   price: 9000,  color: '#aa00ff', scale: [1.0, 0.85, 1.12], speed: 1.15, nitro: 1.35, steer: 1.15, lives: 3, desc: 'Top speed + long nitro' },
+    nova:    { name: 'Nova Hyper',  price: 20000, color: '#00ff66', scale: [1.05, 0.8, 1.18], speed: 1.25, nitro: 1.5,  steer: 1.25, lives: 4, desc: 'The legend. Everything maxed' }
+  };
+  const UPGRADES = {
+    engine:   { name: 'Engine',   icon: '⚙️', desc: '+4% speed & score per level' },
+    nitro:    { name: 'Nitro Tank', icon: '🔥', desc: 'Nitro lasts 12% longer per level' },
+    handling: { name: 'Handling', icon: '🎯', desc: '+8% steering per level' },
+    armor:    { name: 'Armor',    icon: '🛡️', desc: '+2s start shield per level' }
+  };
+  const MAX_UP = 5;
+  const upCost = lvl => Math.round(400 * Math.pow(lvl + 1, 1.6));
+  const MAPS = {
+    neon:   { name: 'Neon City',     price: 0,    icon: '🌃', bg: 0x060814, fog: 0.011, road: 0x10131a, rail: 0x00f0ff, line: 0xffffff, sky: 0x00f0ff, ground: 0xff0077, part: 0x00f0ff, bld: [0x070b17, 0x0b1021], weather: null, amb: 0.7 },
+    desert: { name: 'Desert Sunset', price: 2000, icon: '🏜️', bg: 0xf28c4b, fog: 0.009, road: 0x3b2a20, rail: 0xffa040, line: 0xfff2c0, sky: 0xffc27a, ground: 0x8a3b12, part: 0xffd29a, bld: [0x7a3a1c, 0x5c2a14], weather: null, amb: 1.1 },
+    rain:   { name: 'Storm Night',   price: 3500, icon: '🌧️', bg: 0x0b1420, fog: 0.016, road: 0x0d1117, rail: 0x3b82f6, line: 0xcfe3ff, sky: 0x5f8fbf, ground: 0x0a1626, part: 0x9cc8ff, bld: [0x101a28, 0x0c1420], weather: 'rain', amb: 0.6 },
+    snow:   { name: 'Frozen Peak',   price: 5000, icon: '❄️', bg: 0xb9cfe0, fog: 0.012, road: 0x5a6672, rail: 0xe0f4ff, line: 0x1e3a5f, sky: 0xffffff, ground: 0x7da0c0, part: 0xffffff, bld: [0xdfe9f2, 0xc5d6e6], weather: 'snow', amb: 1.0 }
+  };
+  const MISSION_POOL = [
+    { id: 'coins',    txt: n => `Collect ${n} gold coins`,       min: 6,    max: 14,   reward: 300 },
+    { id: 'overtake', txt: n => `Make ${n} speed overtakes`,      min: 5,    max: 12,   reward: 350 },
+    { id: 'score',    txt: n => `Score ${n} in one race`,         min: 2500, max: 7000, reward: 450, step: 500, single: true },
+    { id: 'nitro',    txt: n => `Use nitro for ${n} seconds`,     min: 15,   max: 40,   reward: 300 },
+    { id: 'races',    txt: n => `Finish ${n} races`,              min: 3,    max: 5,    reward: 250 },
+    { id: 'smash',    txt: n => `Smash ${n} cars with a shield`,  min: 2,    max: 4,    reward: 400 },
+    { id: 'level',    txt: n => `Reach Level ${n} in one race`,   min: 3,    max: 4,    reward: 500, single: true }
+  ];
+
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+  const yesterday = () => { const d = new Date(Date.now() - 864e5); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+
+  const DEFAULT = { coins: 0, cars: ['viper'], car: 'viper', up: { engine: 0, nitro: 0, handling: 0, armor: 0 }, maps: ['neon'], map: 'neon',
+    daily: { last: '', streak: 0 }, missions: { day: '', list: [] }, name: '', races: 0, best: 0 };
+  let S;
+  try { S = Object.assign({}, DEFAULT, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { S = Object.assign({}, DEFAULT); }
+  S.up = Object.assign({}, DEFAULT.up, S.up || {});
+  const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} };
+
+  function seededMissions(day) {
+    let h = 0; for (const c of day) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    const rnd = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
+    const pool = MISSION_POOL.slice(); const out = [];
+    while (out.length < 3) {
+      const m = pool.splice(Math.floor(rnd() * pool.length), 1)[0];
+      const step = m.step || 1;
+      const goal = Math.round((m.min + rnd() * (m.max - m.min)) / step) * step;
+      out.push({ id: m.id, goal, prog: 0, done: false, claimed: false, reward: m.reward });
+    }
+    return out;
+  }
+  function ensureMissions() {
+    if (S.missions.day !== today()) { S.missions = { day: today(), list: seededMissions(today()) }; save(); }
+  }
+  ensureMissions();
+
+  // ---- race tracking ----
+  let race = null, toastFn = null;
+  function track(id, amount, single) {
+    ensureMissions();
+    S.missions.list.forEach(m => {
+      if (m.id !== id || m.done) return;
+      m.prog = single ? Math.max(m.prog, amount) : m.prog + amount;
+      if (m.prog >= m.goal) { m.prog = m.goal; m.done = true; toastFn && toastFn('MISSION COMPLETE! 🎯', '#00ff88'); }
+    });
+  }
+
+  const Meta = {
+    CARS, MAPS,
+    get state() { return S; },
+    stats() {
+      const c = CARS[S.car] || CARS.viper;
+      return {
+        speed: c.speed * (1 + 0.04 * S.up.engine),
+        score: 1 + 0.04 * S.up.engine,
+        nitro: c.nitro * (1 + 0.12 * S.up.nitro),
+        steer: c.steer * (1 + 0.08 * S.up.handling),
+        shield: 2 * S.up.armor,
+        lives: c.lives, color: c.color, scale: c.scale
+      };
+    },
+    setToast(fn) { toastFn = fn; },
+    raceStart() { race = { coins: 0, nitro: 0 }; },
+    ev(type, n) {
+      if (!race) return;
+      n = n || 1;
+      if (type === 'coin') { race.coins += 5; track('coins', 1); }
+      else if (type === 'overtake') { race.coins += 2; track('overtake', 1); }
+      else if (type === 'smash') { race.coins += 5; track('smash', 1); }
+      else if (type === 'nitro') { race.nitro += n; if (race.nitro >= 1) { track('nitro', Math.floor(race.nitro)); race.nitro -= Math.floor(race.nitro); } }
+      else if (type === 'level') track('level', n, true);
+    },
+    raceEnd(score, level) {
+      if (!race) return 0;
+      track('score', score, true); track('level', level, true); track('races', 1);
+      const earned = race.coins + Math.floor(score / 40);
+      S.coins += earned; S.races++; S.best = Math.max(S.best, score);
+      race = null; save(); renderWallet();
+      if (S.name) submitScore(score);
+      return earned;
+    }
+  };
+  window.CHMeta = Meta;
+
+  // ---- leaderboard ----
+  async function submitScore(score) {
+    if (!S.name || score < 100) return;
+    try {
+      await fetch(LB_URL, { method: 'POST', headers: { apikey: LB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ player_name: S.name, score, map: S.map, car: S.car }) });
+    } catch (e) {}
+  }
+  async function fetchTop() {
+    const r = await fetch(`${LB_URL}?select=player_name,score,map,car&order=score.desc&limit=25`, { headers: { apikey: LB_KEY } });
+    if (!r.ok) throw new Error('lb');
+    return r.json();
+  }
+
+  // ---- UI ----
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function renderWallet() {
+    document.querySelectorAll('.ch-wallet-val').forEach(el => el.textContent = S.coins.toLocaleString());
+    const dot = $('ch-daily-dot'); if (dot) dot.style.display = S.daily.last === today() ? 'none' : 'block';
+    const md = $('ch-mission-dot'); if (md) md.style.display = S.missions.list.some(m => m.done && !m.claimed) ? 'block' : 'none';
+  }
+  function spend(cost) { if (S.coins < cost) { flash('Not enough coins! Race to earn more 🪙'); return false; } S.coins -= cost; save(); renderWallet(); return true; }
+  function flash(msg) { const f = $('ch-flash'); if (!f) return; f.textContent = msg; f.classList.add('show'); clearTimeout(flash.t); flash.t = setTimeout(() => f.classList.remove('show'), 1600); }
+
+  const bar = (v, max) => `<div class="ch-stat"><i style="width:${Math.min(100, v / max * 100)}%"></i></div>`;
+  const TABS = {
+    garage() {
+      return Object.entries(CARS).map(([id, c]) => {
+        const owned = S.cars.includes(id), sel = S.car === id;
+        return `<div class="ch-card ${sel ? 'sel' : ''}">
+          <div class="ch-car-sw" style="background:${c.color};box-shadow:0 0 18px ${c.color}"></div>
+          <div class="ch-card-main"><b>${c.name}</b><small>${c.desc}</small>
+            <div class="ch-stats"><span>SPD</span>${bar(c.speed, 1.25)}<span>NOS</span>${bar(c.nitro, 1.5)}<span>STR</span>${bar(c.steer, 1.3)}<span>❤️ ${c.lives}</span></div></div>
+          ${sel ? '<button class="ch-btn on" disabled>DRIVING</button>' : owned ? `<button class="ch-btn" data-act="car" data-id="${id}">SELECT</button>` : `<button class="ch-btn buy" data-act="buycar" data-id="${id}">🪙 ${c.price.toLocaleString()}</button>`}
+        </div>`;
+      }).join('');
+    },
+    upgrade() {
+      return Object.entries(UPGRADES).map(([id, u]) => {
+        const lvl = S.up[id];
+        const pips = Array.from({ length: MAX_UP }, (_, i) => `<i class="${i < lvl ? 'f' : ''}"></i>`).join('');
+        return `<div class="ch-card"><div class="ch-ic">${u.icon}</div><div class="ch-card-main"><b>${u.name} <small>LV ${lvl}/${MAX_UP}</small></b><small>${u.desc}</small><div class="ch-pips">${pips}</div></div>
+          ${lvl >= MAX_UP ? '<button class="ch-btn on" disabled>MAX</button>' : `<button class="ch-btn buy" data-act="up" data-id="${id}">🪙 ${upCost(lvl).toLocaleString()}</button>`}</div>`;
+      }).join('');
+    },
+    missions() {
+      ensureMissions();
+      const daily = S.daily.last === today();
+      const next = S.daily.last === yesterday() ? S.daily.streak + 1 : 1;
+      const reward = 200 + 100 * Math.min(next, 7);
+      const days = Array.from({ length: 7 }, (_, i) => {
+        const cur = daily ? S.daily.streak : next - 1;
+        return `<div class="ch-day ${i < cur ? 'got' : ''} ${!daily && i === next - 1 ? 'now' : ''}"><small>D${i + 1}</small>🪙<br>${200 + 100 * (i + 1)}</div>`;
+      }).join('');
+      const ms = S.missions.list.map((m, i) => {
+        const def = MISSION_POOL.find(p => p.id === m.id);
+        return `<div class="ch-card"><div class="ch-ic">${m.claimed ? '✅' : m.done ? '🎁' : '🎯'}</div><div class="ch-card-main"><b>${def.txt(m.goal)}</b>
+          <div class="ch-stat"><i style="width:${m.prog / m.goal * 100}%"></i></div><small>${m.prog.toLocaleString()} / ${m.goal.toLocaleString()}</small></div>
+          ${m.claimed ? '<button class="ch-btn on" disabled>DONE</button>' : m.done ? `<button class="ch-btn buy" data-act="claim" data-id="${i}">GET 🪙${m.reward}</button>` : `<button class="ch-btn" disabled>🪙 ${m.reward}</button>`}</div>`;
+      }).join('');
+      return `<h4>🎁 Daily Login Reward</h4><div class="ch-days">${days}</div>
+        ${daily ? `<p class="ch-note">Come back tomorrow to keep your 🔥 ${S.daily.streak}-day streak!</p>` : `<button class="cg-btn-play ch-wide" data-act="daily">CLAIM 🪙 ${reward}</button>`}
+        <h4>🎯 Today's Missions <small>(new every day)</small></h4>${ms}`;
+    },
+    maps() {
+      return Object.entries(MAPS).map(([id, m]) => {
+        const owned = S.maps.includes(id), sel = S.map === id;
+        const bg = '#' + m.bg.toString(16).padStart(6, '0'), rl = '#' + m.rail.toString(16).padStart(6, '0');
+        return `<div class="ch-card ${sel ? 'sel' : ''}"><div class="ch-map-sw" style="background:linear-gradient(180deg,${bg} 55%,${rl} 56%,#222 60%)">${m.icon}</div>
+          <div class="ch-card-main"><b>${m.name}</b><small>${m.weather === 'rain' ? 'Heavy rain, low visibility' : m.weather === 'snow' ? 'Falling snow, icy roads' : id === 'desert' ? 'Golden-hour highway' : 'The classic neon highway'}</small></div>
+          ${sel ? '<button class="ch-btn on" disabled>ACTIVE</button>' : owned ? `<button class="ch-btn" data-act="map" data-id="${id}">RACE HERE</button>` : `<button class="ch-btn buy" data-act="buymap" data-id="${id}">🪙 ${m.price.toLocaleString()}</button>`}</div>`;
+      }).join('');
+    },
+    leaderboard() {
+      setTimeout(loadLB, 0);
+      return `<div class="ch-name-row"><input id="ch-name" maxlength="16" placeholder="Your racer name" value="${esc(S.name)}"><button class="ch-btn buy" data-act="name">SAVE</button></div>
+        <p class="ch-note">${S.name ? 'Your scores are sent automatically after each race.' : 'Set a name to put your scores on the world board!'} Your best: <b>${S.best.toLocaleString()}</b></p>
+        <div id="ch-lb-list"><p class="ch-note">Loading world ranking…</p></div>`;
+    }
+  };
+  async function loadLB() {
+    const el = $('ch-lb-list'); if (!el) return;
+    try {
+      const rows = await fetchTop();
+      el.innerHTML = rows.length ? rows.map((r, i) => `<div class="ch-lb ${r.player_name === S.name ? 'me' : ''}"><span class="rk">${i < 3 ? ['🥇', '🥈', '🥉'][i] : '#' + (i + 1)}</span><span class="nm">${esc(r.player_name)}<small>${MAPS[r.map] ? MAPS[r.map].icon : ''} ${CARS[r.car] ? CARS[r.car].name : ''}</small></span><b>${Number(r.score).toLocaleString()}</b></div>`).join('')
+        : '<p class="ch-note">No scores yet — be the first legend!</p>';
+    } catch (e) { el.innerHTML = '<p class="ch-note">World ranking needs an internet connection.</p>'; }
+  }
+
+  let curTab = 'garage';
+  function open(tab) { curTab = tab; $('ch-panel').classList.add('open'); render(); }
+  function render() {
+    document.querySelectorAll('.ch-tab').forEach(t => t.classList.toggle('act', t.dataset.tab === curTab));
+    $('ch-panel-body').innerHTML = TABS[curTab]();
+    renderWallet();
+  }
+
+  function onAct(act, id) {
+    const core = window.CHCore || {};
+    if (act === 'car') { S.car = id; save(); core.applyCar && core.applyCar(); }
+    else if (act === 'buycar') { if (!spend(CARS[id].price)) return; S.cars.push(id); S.car = id; save(); core.applyCar && core.applyCar(); flash(CARS[id].name + ' unlocked! 🚗'); }
+    else if (act === 'up') { const c = upCost(S.up[id]); if (!spend(c)) return; S.up[id]++; save(); flash(UPGRADES[id].name + ' upgraded! ⚡'); }
+    else if (act === 'map') { S.map = id; save(); core.applyMap && core.applyMap(); }
+    else if (act === 'buymap') { if (!spend(MAPS[id].price)) return; S.maps.push(id); S.map = id; save(); core.applyMap && core.applyMap(); flash(MAPS[id].name + ' unlocked! 🗺️'); }
+    else if (act === 'claim') { const m = S.missions.list[+id]; if (!m || !m.done || m.claimed) return; m.claimed = true; S.coins += m.reward; save(); flash('+' + m.reward + ' coins! 🪙'); }
+    else if (act === 'daily') {
+      if (S.daily.last === today()) return;
+      S.daily.streak = S.daily.last === yesterday() ? S.daily.streak + 1 : 1;
+      if (S.daily.streak > 7) S.daily.streak = 1;
+      S.daily.last = today();
+      const r = 200 + 100 * S.daily.streak; S.coins += r; save(); flash('+' + r + ' daily coins! 🎁');
+    } else if (act === 'name') {
+      const v = ($('ch-name').value || '').trim().replace(/\s+/g, ' ');
+      if (v.length < 2) { flash('Name needs at least 2 letters'); return; }
+      S.name = v.slice(0, 16); save(); flash('Name saved! Race to climb the ranking 🏆');
+      if (S.best >= 100) submitScore(S.best);
+    }
+    render();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-act]'); if (b && !b.disabled) { onAct(b.dataset.act, b.dataset.id); return; }
+      const t = e.target.closest('[data-open]'); if (t) { open(t.dataset.open); return; }
+      const tab = e.target.closest('.ch-tab'); if (tab) { curTab = tab.dataset.tab; render(); return; }
+      if (e.target.closest('#ch-panel-close')) $('ch-panel').classList.remove('open');
+    });
+    renderWallet();
+  });
+})();
+</script>
+    <script src="three.min.js">
+    </script>
+  </head>
+  <body>
+    <div id="cyber-game-root">
+      <!-- Top Banner Bar -->
+      <div id="ad-top-wrapper">
+        <div class="ad-placeholder-banner" id="adsterra-banner-top">
+          
+          <span style="font-size:12px; color:#38bdf8;"></span>
+        </div>
+      </div>
+      <!-- Speed Tunnel Vignette -->
+      <div id="cg-vignette">
+      </div>
+      <div id="ch-hud-wallet" class="ch-wallet">🪙 <span class="ch-wallet-val">0</span></div>
+      <div id="ch-flash"></div>
+      <div id="ch-panel"><div class="ch-box">
+        <div class="ch-head"><div class="ch-wallet">🪙 <span class="ch-wallet-val">0</span></div><button id="ch-panel-close">✕</button></div>
+        <div class="ch-tabs">
+          <button class="ch-tab" data-tab="garage">🚗 GARAGE</button><button class="ch-tab" data-tab="upgrade">🔧 UPGRADE</button><button class="ch-tab" data-tab="missions">🎁 DAILY</button><button class="ch-tab" data-tab="maps">🗺️ MAPS</button><button class="ch-tab" data-tab="leaderboard">🏆 RANK</button>
+        </div>
+        <div id="ch-panel-body"></div>
+      </div></div>
+      <!-- Realtime HUD -->
+      <div id="cg-hud">
+        <!-- Left: Score & Lives -->
+        <div class="cg-badge">
+          <div class="cg-label">
+            Score
+          </div>
+          <div class="cg-val" id="cg-score-display">
+            0
+          </div>
+          <div style="font-size: 9px; color: #94a3b8; margin-top: 3px;">
+            LIVES:
+          </div>
+          <div id="cg-lives-box">
+            ❤️❤️❤️
+          </div>
+        </div>
+        <!-- Center: Speedometer & Level -->
+        <div class="cg-badge" id="cg-center-info">
+          <div class="cg-speed-num" id="cg-speed-display">
+            0
+          </div>
+          <div class="cg-speed-unit">
+            KM / H
+          </div>
+          <div class="cg-level-pill" id="cg-level-badge">
+            LEVEL 1: BEGINNER
+          </div>
+        </div>
+        <!-- Right: High Score -->
+        <div class="cg-badge" style="text-align: right;">
+          <div class="cg-label">
+            Best Record
+          </div>
+          <div class="cg-val" id="cg-high-display" style="color: #ffea00; text-shadow: 0 0 10px #ffea00;">
+            0
+          </div>
+        </div>
+      </div>
+      <!-- Shield Active Indicator -->
+      <div id="cg-shield-indicator">
+        ⚡ SHIELD INVULNERABLE
+      </div>
+      <!-- Popup Banner -->
+      <div id="cg-popup">
+        +150 OVERTAKE!
+      </div>
+      <!-- Nitro Gauge -->
+      <div id="cg-nitro-panel">
+        <div class="cg-nitro-txt">
+          NITRO BOOST [SPACE / W]
+        </div>
+        <div class="cg-nitro-bar-outer">
+          <div id="cg-nitro-bar-inner">
+          </div>
+        </div>
+      </div>
+      <!-- Audio & Fullscreen Buttons -->
+      <div id="cg-top-btns">
+        <button class="cg-icon-btn" id="cg-btn-mute" title="Sound On/Off">
+          <span id="cg-mute-icon">          🔊
+</span>
+        </button>
+        <button class="cg-icon-btn" id="cg-btn-fs" title="Toggle Fullscreen">
+          ⛶
+        </button>
+      </div>
+      <!-- Touch steering zones (left half / right half of screen) -->
+      <div id="cg-steer-zones"><div id="cg-zone-left"></div><div id="cg-zone-right"></div></div>
+      <div id="cg-steer-hint">👈 TOUCH LEFT / RIGHT SIDE TO STEER 👉</div>
+      <!-- Mobile Controls -->
+      <div id="cg-mobile-controls">
+        <div class="cg-touch-group">
+          <button class="cg-touch-btn" id="cg-btn-left">
+            ◀
+          </button>
+          <button class="cg-touch-btn" id="cg-btn-right">
+            ▶
+          </button>
+        </div>
+        <div class="cg-touch-group">
+          <button class="cg-touch-btn" id="cg-btn-brake" style="border-color:#ffaa00; font-size:13px;">
+            BRAKE
+          </button>
+          <button class="cg-touch-btn cg-btn-nitro" id="cg-btn-nitro" style="font-size:13px;">
+            NITRO
+          </button>
+        </div>
+      </div>
+      <!-- Start Game Menu Screen -->
+      <div class="cg-overlay" id="cg-start-overlay">
+        <div class="cg-title">
+          CYBER HORIZON 3D
+        </div>
+        <div class="cg-sub">
+          Ultimate 3D Racing Experience
+        </div>
+        <div class="cg-difficulty-badge">
+          ✔ PROGRESSIVE: BEGINNER → ADVANCED (3 LIVES)
+        </div>
+        <div style="color: #94a3b8; font-size: 11px; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase;">
+          Choose Car Paint
+        </div>
+        <div class="cg-color-row" id="cg-color-picker">
+          <div class="cg-dot selected" data-color="#ff0044" style="background: #ff0044;">
+          </div>
+          <div class="cg-dot" data-color="#00f0ff" style="background: #00f0ff;">
+          </div>
+          <div class="cg-dot" data-color="#00ff66" style="background: #00ff66;">
+          </div>
+          <div class="cg-dot" data-color="#ffea00" style="background: #ffea00;">
+          </div>
+          <div class="cg-dot" data-color="#aa00ff" style="background: #aa00ff;">
+          </div>
+          <div class="cg-dot" data-color="#181a20" style="background: #2a2c38;">
+          </div>
+        </div>
+        <div class="ch-wallet">🪙 <span class="ch-wallet-val">0</span></div>
+        <button class="cg-btn-play" id="cg-btn-start">
+          START RACE
+        </button>
+        <div class="ch-menu">
+          <button data-open="garage">🚗<small>GARAGE</small></button>
+          <button data-open="upgrade">🔧<small>UPGRADE</small></button>
+          <button data-open="missions">🎁<small>DAILY</small><span class="ch-dot" id="ch-daily-dot"></span><span class="ch-dot" id="ch-mission-dot" style="right:auto;left:7px;background:#00ff88;box-shadow:0 0 8px #00ff88"></span></button>
+          <button data-open="maps">🗺️<small>MAPS</small></button>
+          <button data-open="leaderboard">🏆<small>RANKING</small></button>
+        </div>
+        
+        <div class="cg-keys-guide">
+          <div class="cg-k-item">
+            <span class="cg-key">            A / ←
+</span>
+            <span class="cg-key">            D / →
+</span>
+            Steer
+          </div>
+          <div class="cg-k-item">
+            <span class="cg-key">            W / ↑ / SPACE
+</span>
+            Nitro
+          </div>
+          <div class="cg-k-item">
+            <span class="cg-key">            S / ↓
+</span>
+            Brake
+          </div>
+        </div>
+      </div>
+      <!-- Game Over Screen with Exact Adsterra 300x250 Ad Script -->
+      <div class="cg-overlay cg-hidden" id="cg-gameover-overlay">
+        <div class="cg-title" style="background: linear-gradient(45deg, #ff0055, #ff3300); -webkit-background-clip: text;">
+          RACE OVER!
+        </div>
+        <div class="cg-sub" id="cg-gameover-sub">
+          Traffic speeds up as you advance!
+        </div>
+        <div class="cg-badge" style="min-width: 190px; text-align: center; padding: 6px 18px; margin-bottom: 6px;">
+          <div class="cg-label">
+            Final Race Score
+          </div>
+          <div class="cg-val" id="cg-final-score" style="font-size: 24px; color: #00f0ff;">
+            0
+          </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- [ADSTERRA 300x250 AD SLOT]: User's Exact Script Integrated      -->
+        <!-- ============================================================== -->
+        <div id="ad-gameover-slot">
+          <iframe src="banner.html" title="Advertisement" loading="lazy" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>
+        </div>
+        <!-- ============================================================== -->
+        <div id="ch-earned"></div>
+        <div class="ch-menu">
+          <button data-open="garage">🚗<small>GARAGE</small></button>
+          <button data-open="upgrade">🔧<small>UPGRADE</small></button>
+          <button data-open="missions">🎁<small>DAILY</small><span class="ch-dot" id="ch-daily-dot2"></span><span class="ch-dot" id="ch-mission-dot2" style="right:auto;left:7px;background:#00ff88;box-shadow:0 0 8px #00ff88"></span></button>
+          <button data-open="maps">🗺️<small>MAPS</small></button>
+          <button data-open="leaderboard">🏆<small>RANKING</small></button>
+        </div>
+        <button class="cg-btn-play" id="cg-btn-restart">
+          PLAY AGAIN
+        </button>
+      </div>
+    </div>
+    <script>
+      (function() {
+  'use strict';
+
+  // --- 1. WEB AUDIO SYNTHESIZER ---
+  class SoundEngine {
+    constructor() {
+      this.ctx = null;
+      this.enabled = true;
+      this.engineOsc = null;
+      this.engineGain = null;
+      this.engineFilter = null;
+      this.bgmPlaying = false;
+      this.bgmTimer = null;
+    }
+
+    init() {
+      if (this.ctx) return;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      this.ctx = new AudioCtx();
+
+      this.masterComp = this.ctx.createDynamicsCompressor();
+      this.masterComp.connect(this.ctx.destination);
+
+      this.engineOsc = this.ctx.createOscillator();
+      this.engineOsc.type = 'sawtooth';
+
+      this.engineFilter = this.ctx.createBiquadFilter();
+      this.engineFilter.type = 'lowpass';
+      this.engineFilter.frequency.value = 160;
+
+      this.engineGain = this.ctx.createGain();
+      this.engineGain.gain.value = 0.0001;
+
+      this.engineOsc.connect(this.engineFilter);
+      this.engineFilter.connect(this.engineGain);
+      this.engineGain.connect(this.masterComp);
+
+      try { this.engineOsc.start(); } catch(e){}
+    }
+
+    updateEngineSound(speedRatio, active) {
+      if (!this.ctx || !this.enabled || !active) {
+        if (this.engineGain) this.engineGain.gain.setTargetAtTime(0, this.ctx ? this.ctx.currentTime : 0, 0.08);
+        return;
+      }
+      const t = this.ctx.currentTime;
+      const targetFreq = 48 + (speedRatio * 165);
+      this.engineOsc.frequency.setTargetAtTime(targetFreq, t, 0.05);
+      this.engineFilter.frequency.setTargetAtTime(130 + (speedRatio * 500), t, 0.05);
+      this.engineGain.gain.setTargetAtTime(0.11, t, 0.08);
+    }
+
+    playCoin() {
+      if (!this.ctx || !this.enabled) return;
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, t);
+      osc.frequency.setValueAtTime(880.00, t + 0.07);
+      osc.frequency.setValueAtTime(1174.66, t + 0.14);
+      g.gain.setValueAtTime(0.18, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+      osc.connect(g);
+      g.connect(this.masterComp);
+      osc.start(t);
+      osc.stop(t + 0.32);
+    }
+
+    playNitro() {
+      if (!this.ctx || !this.enabled) return;
+      const t = this.ctx.currentTime;
+      const len = this.ctx.sampleRate * 0.3;
+      const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      const f = this.ctx.createBiquadFilter();
+      f.type = 'bandpass';
+      f.frequency.setValueAtTime(700, t);
+      f.frequency.exponentialRampToValueAtTime(2800, t + 0.28);
+      f.Q.value = 3;
+
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(0.2, t);
+      g.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+
+      src.connect(f);
+      f.connect(g);
+      g.connect(this.masterComp);
+      src.start(t);
+    }
+
+    playHit() {
+      if (!this.ctx || !this.enabled) return;
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(150, t);
+      osc.frequency.exponentialRampToValueAtTime(40, t + 0.25);
+      g.gain.setValueAtTime(0.4, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.connect(g);
+      g.connect(this.masterComp);
+      osc.start(t);
+      osc.stop(t + 0.28);
+    }
+
+    playLevelUp() {
+      if (!this.ctx || !this.enabled) return;
+      const t = this.ctx.currentTime;
+      const notes = [440, 554, 659, 880];
+      notes.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, t + idx * 0.08);
+        g.gain.setValueAtTime(0.2, t + idx * 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.08 + 0.25);
+        osc.connect(g);
+        g.connect(this.masterComp);
+        osc.start(t + idx * 0.08);
+        osc.stop(t + idx * 0.08 + 0.25);
+      });
+    }
+
+    playCrash() {
+      if (!this.ctx || !this.enabled) return;
+      const t = this.ctx.currentTime;
+      const len = this.ctx.sampleRate * 0.7;
+      const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.2));
+      }
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      const f = this.ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.setValueAtTime(380, t);
+      f.frequency.exponentialRampToValueAtTime(45, t + 0.6);
+
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(0.6, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+
+      src.connect(f);
+      f.connect(g);
+      g.connect(this.masterComp);
+      src.start(t);
+    }
+
+    startBGM() {
+      if (!this.ctx || !this.enabled || this.bgmPlaying) return;
+      this.bgmPlaying = true;
+      let step = 0;
+      const bassSeq = [55, 55, 65.4, 65.4, 73.4, 73.4, 82.4, 73.4];
+      const leadSeq = [220, 261.6, 329.6, 392, 440, 523.2, 440, 329.6];
+
+      const loop = () => {
+        if (!this.bgmPlaying || !this.enabled) return;
+        const t = this.ctx.currentTime;
+
+        const bOsc = this.ctx.createOscillator();
+        const bGain = this.ctx.createGain();
+        bOsc.type = 'sawtooth';
+        bOsc.frequency.value = bassSeq[step % bassSeq.length];
+        bGain.gain.setValueAtTime(0.065, t);
+        bGain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+
+        const bFilt = this.ctx.createBiquadFilter();
+        bFilt.type = 'lowpass';
+        bFilt.frequency.setValueAtTime(340, t);
+        bFilt.frequency.exponentialRampToValueAtTime(100, t + 0.16);
+
+        bOsc.connect(bFilt);
+        bFilt.connect(bGain);
+        bGain.connect(this.masterComp);
+        bOsc.start(t);
+        bOsc.stop(t + 0.18);
+
+        if (step % 2 === 0) {
+          const lOsc = this.ctx.createOscillator();
+          const lGain = this.ctx.createGain();
+          lOsc.type = 'sine';
+          lOsc.frequency.value = leadSeq[(step / 2) % leadSeq.length];
+          lGain.gain.setValueAtTime(0.03, t);
+          lGain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+          lOsc.connect(lGain);
+          lGain.connect(this.masterComp);
+          lOsc.start(t);
+          lOsc.stop(t + 0.22);
+        }
+
+        step++;
+        this.bgmTimer = setTimeout(loop, 240);
+      };
+      loop();
+    }
+
+    stopBGM() {
+      this.bgmPlaying = false;
+      if (this.bgmTimer) clearTimeout(this.bgmTimer);
+    }
+
+    toggle() {
+      this.enabled = !this.enabled;
+      if (!this.enabled) {
+        this.stopBGM();
+        if (this.engineGain) this.engineGain.gain.value = 0;
+      } else {
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        this.startBGM();
+      }
+      return this.enabled;
+    }
+  }
+
+  // --- 2. GAME STATE & PROGRESSION ---
+  const sound = new SoundEngine();
+  const LANES = [-6, -2, 2, 6];
+  const ROAD_WIDTH = 18;
+  const ROAD_LENGTH = 320;
+
+  let scene, camera, renderer;
+  let playerCar, playerChassisMat, playerUnderglow;
+  let roadMesh, roadLines = [], roadLamps = [];
+  let trafficCars = [];
+  let collectables = [];
+  let speedParticles = [];
+
+  let isPlaying = false;
+  let isGameOver = false;
+  let score = 0;
+  let highscore = parseInt(localStorage.getItem('cyber_horizon_highscore') || '0', 10);
+  let selectedColor = '#ff0044';
+
+  let lives = 3;
+  let maxLives = 3;
+  let ST = window.CHMeta.stats();
+  const mapRefs = {};
+  let weather = null;
+  let currentLevel = 1;
+  let invincibleTimer = 0;
+
+  let currentSpeed = 0;
+  let baseCruisingSpeed = 75;
+  let maxNitroSpeed = 145;
+  let minBrakeSpeed = 45;
+  let targetSpeed = baseCruisingSpeed;
+
+  let playerX = 0;
+  let targetPlayerX = 0;
+  let carTilt = 0;
+
+  let nitroAmount = 100;
+  const MAX_NITRO = 100;
+  let isNitroActive = false;
+  let shieldTimer = 0;
+
+  const keys = { left: false, right: false, nitro: false, brake: false };
+
+  // DOM Elements
+  const root = document.getElementById('cyber-game-root');
+  const scoreDisplay = document.getElementById('cg-score-display');
+  const speedDisplay = document.getElementById('cg-speed-display');
+  const highDisplay = document.getElementById('cg-high-display');
+  const livesBox = document.getElementById('cg-lives-box');
+  const levelBadge = document.getElementById('cg-level-badge');
+  const nitroBarInner = document.getElementById('cg-nitro-bar-inner');
+  const popupEl = document.getElementById('cg-popup');
+  const shieldPill = document.getElementById('cg-shield-indicator');
+  const vignetteEl = document.getElementById('cg-vignette');
+  const startOverlay = document.getElementById('cg-start-overlay');
+  const gameoverOverlay = document.getElementById('cg-gameover-overlay');
+  const finalScoreDisplay = document.getElementById('cg-final-score');
+  const btnStart = document.getElementById('cg-btn-start');
+  const btnRestart = document.getElementById('cg-btn-restart');
+  const btnMute = document.getElementById('cg-btn-mute');
+  const muteIcon = document.getElementById('cg-mute-icon');
+  const btnFs = document.getElementById('cg-btn-fs');
+  const mobileControls = document.getElementById('cg-mobile-controls');
+
+  highDisplay.textContent = highscore;
+
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    mobileControls.style.display = 'flex';
+    document.body.classList.add('cg-touch');
+  }
+
+  // Use the real visible screen height (fixes buttons going below the screen on mobile browsers)
+  function fitAppHeight() {
+    const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    document.documentElement.style.setProperty('--cg-app-h', Math.round(vh) + 'px');
+  }
+  fitAppHeight();
+  window.addEventListener('resize', fitAppHeight);
+  window.addEventListener('orientationchange', () => setTimeout(fitAppHeight, 300));
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fitAppHeight);
+
+  // --- 3. 3D ASSETS ---
+  function buildCarMesh(colorHex, isPlayer = false) {
+    const car = new THREE.Group();
+
+    const bodyGeo = new THREE.BoxGeometry(2.1, 0.52, 4.4);
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: colorHex,
+      metalness: 0.88,
+      roughness: 0.22
+    });
+    if (isPlayer) playerChassisMat = bodyMat;
+
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 0.52;
+    body.castShadow = true;
+    body.receiveShadow = true;
+    car.add(body);
+
+    const hoodGeo = new THREE.BoxGeometry(1.9, 0.35, 1.3);
+    const hood = new THREE.Mesh(hoodGeo, bodyMat);
+    hood.position.set(0, 0.44, -1.6);
+    car.add(hood);
+
+    const glassGeo = new THREE.BoxGeometry(1.6, 0.5, 2.2);
+    const glassMat = new THREE.MeshStandardMaterial({
+      color: 0x080c14,
+      metalness: 0.95,
+      roughness: 0.08,
+      transparent: true,
+      opacity: 0.88
+    });
+    const glass = new THREE.Mesh(glassGeo, glassMat);
+    glass.position.set(0, 0.95, -0.2);
+    car.add(glass);
+
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.08, 1.5), bodyMat);
+    roof.position.set(0, 1.22, -0.2);
+    car.add(roof);
+
+    const spoiler = new THREE.Mesh(new THREE.BoxGeometry(1.95, 0.08, 0.45), bodyMat);
+    spoiler.position.set(0, 1.15, 1.95);
+    const pMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9 });
+    const pil1 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.1), pMat);
+    pil1.position.set(-0.7, 0.9, 1.95);
+    const pil2 = pil1.clone();
+    pil2.position.set(0.7, 0.9, 1.95);
+    car.add(spoiler, pil1, pil2);
+
+    const hlMat = new THREE.MeshBasicMaterial({ color: 0xe0f7ff });
+    const hl1 = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.12, 0.1), hlMat);
+    hl1.position.set(-0.75, 0.52, -2.21);
+    const hl2 = hl1.clone();
+    hl2.position.set(0.75, 0.52, -2.21);
+    car.add(hl1, hl2);
+
+    const tlMat = new THREE.MeshBasicMaterial({ color: 0xff0044 });
+    const tl1 = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.12, 0.1), tlMat);
+    tl1.position.set(-0.75, 0.55, 2.21);
+    const tl2 = tl1.clone();
+    tl2.position.set(0.75, 0.55, 2.21);
+    car.add(tl1, tl2);
+
+    const wheelGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.32, 16);
+    const tireMat = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.9 });
+    const rimGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.33, 8);
+    const rimMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.95, roughness: 0.15 });
+
+    const wheels = [];
+    [[-1.05, 0.38, -1.3], [1.05, 0.38, -1.3], [-1.05, 0.38, 1.3], [1.05, 0.38, 1.3]].forEach(pos => {
+      const wGrp = new THREE.Group();
+      const tire = new THREE.Mesh(wheelGeo, tireMat);
+      tire.rotation.z = Math.PI / 2;
+      tire.castShadow = true;
+      const rim = new THREE.Mesh(rimGeo, rimMat);
+      rim.rotation.z = Math.PI / 2;
+      wGrp.add(tire, rim);
+      wGrp.position.set(pos[0], pos[1], pos[2]);
+      car.add(wGrp);
+      wheels.push(wGrp);
+    });
+    car.userData.wheels = wheels;
+
+    const exMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.95 });
+    const ex1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.25, 8), exMat);
+    ex1.rotation.x = Math.PI / 2;
+    ex1.position.set(-0.4, 0.32, 2.24);
+    const ex2 = ex1.clone();
+    ex2.position.set(0.4, 0.32, 2.24);
+    car.add(ex1, ex2);
+
+    if (isPlayer) {
+      const underglowMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.65 });
+      playerUnderglow = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 4.2), underglowMat);
+      playerUnderglow.rotation.x = -Math.PI / 2;
+      playerUnderglow.position.y = 0.05;
+      car.add(playerUnderglow);
+
+      const beamMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.15 });
+      const beam = new THREE.Mesh(new THREE.ConeGeometry(3.5, 14, 16), beamMat);
+      beam.rotation.x = Math.PI / 2 + 0.12;
+      beam.position.set(0, 0.3, -9);
+      car.add(beam);
+    }
+
+    return car;
+  }
+
+  function buildCollectable(type) {
+    const group = new THREE.Group();
+    group.userData.type = type;
+
+    if (type === 'coin') {
+      const mesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.68, 0.68, 0.14, 16),
+        new THREE.MeshStandardMaterial({ color: 0xffcc00, metalness: 0.9, roughness: 0.2, emissive: 0xffaa00, emissiveIntensity: 0.4 })
+      );
+      mesh.rotation.x = Math.PI / 2;
+      group.add(mesh);
+    } else if (type === 'nitro') {
+      const mesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.32, 0.32, 1.15, 12),
+        new THREE.MeshStandardMaterial({ color: 0x00f0ff, metalness: 0.8, emissive: 0x00a8ff, emissiveIntensity: 0.6 })
+      );
+      group.add(mesh);
+    } else if (type === 'shield') {
+      const mesh = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.6, 1),
+        new THREE.MeshStandardMaterial({ color: 0x00ff88, wireframe: true, emissive: 0x00ff88, emissiveIntensity: 0.9 })
+      );
+      group.add(mesh);
+    } else if (type === 'heart') {
+      const mesh = new THREE.Mesh(
+        new THREE.DodecahedronGeometry(0.55),
+        new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0xff0055, emissiveIntensity: 0.8 })
+      );
+      group.add(mesh);
+    }
+
+    group.position.y = 0.9;
+    return group;
+  }
+
+  // --- 4. SCENE SETUP ---
+  function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x060814);
+    scene.fog = new THREE.FogExp2(0x060814, 0.011);
+
+    const w = root.clientWidth || window.innerWidth;
+    const h = root.clientHeight || window.innerHeight;
+
+    camera = new THREE.PerspectiveCamera(62, w / h, 0.1, 800);
+    camera.position.set(0, 4.3, 7.8);
+    camera.lookAt(0, 1.4, -16);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    root.appendChild(renderer.domElement);
+
+    const amb = mapRefs.amb = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(amb);
+
+    const dir = new THREE.DirectionalLight(0xbbe1fa, 1.25);
+    dir.position.set(25, 45, -25);
+    dir.castShadow = true;
+    scene.add(dir);
+
+    const hemi = mapRefs.hemi = new THREE.HemisphereLight(0x00f0ff, 0xff0077, 0.35);
+    scene.add(hemi);
+
+    setupHighway();
+    setupCitySkyline();
+    setupSpeedWarpLines();
+
+    playerCar = buildCarMesh(selectedColor, true);
+    scene.add(playerCar);
+
+    setupTraffic();
+    setupWeather();
+    applyMap();
+    applyCar();
+    window.addEventListener('resize', handleResize);
+  }
+
+  function setupHighway() {
+    const roadGeo = new THREE.PlaneGeometry(ROAD_WIDTH, ROAD_LENGTH, 1, 1);
+    const roadMat = mapRefs.road = new THREE.MeshStandardMaterial({ color: 0x10131a, roughness: 0.85 });
+    roadMesh = new THREE.Mesh(roadGeo, roadMat);
+    roadMesh.rotation.x = -Math.PI / 2;
+    roadMesh.receiveShadow = true;
+    scene.add(roadMesh);
+
+    const lineGeo = new THREE.PlaneGeometry(0.24, 4.2);
+    const lineMat = mapRefs.line = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    for (let z = -ROAD_LENGTH / 2; z < ROAD_LENGTH / 2; z += 8.5) {
+      [-2, 2].forEach(lx => {
+        const line = new THREE.Mesh(lineGeo, lineMat);
+        line.rotation.x = -Math.PI / 2;
+        line.position.set(lx, 0.02, z);
+        scene.add(line);
+        roadLines.push(line);
+      });
+    }
+
+    const railMat = mapRefs.rail = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00a8ff, emissiveIntensity: 0.65, metalness: 0.8 });
+    const leftRail = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.5, ROAD_LENGTH), railMat);
+    leftRail.position.set(-ROAD_WIDTH / 2, 0.25, 0);
+    const rightRail = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.5, ROAD_LENGTH), railMat);
+    rightRail.position.set(ROAD_WIDTH / 2, 0.25, 0);
+    scene.add(leftRail, rightRail);
+
+    const poleGeo = new THREE.CylinderGeometry(0.12, 0.15, 6, 8);
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x1f2438 });
+    const lampHeadMat = mapRefs.lamp = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+
+    for (let z = -ROAD_LENGTH / 2; z < ROAD_LENGTH / 2; z += 35) {
+      [-ROAD_WIDTH / 2 - 1.5, ROAD_WIDTH / 2 + 1.5].forEach((xPos, i) => {
+        const lamp = new THREE.Group();
+        const pole = new THREE.Mesh(poleGeo, poleMat);
+        pole.position.y = 3;
+        const head = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.2, 0.35), lampHeadMat);
+        head.position.set(i === 0 ? 0.6 : -0.6, 6, 0);
+        lamp.add(pole, head);
+        lamp.position.set(xPos, 0, z);
+        scene.add(lamp);
+        roadLamps.push(lamp);
+      });
+    }
+  }
+
+  function setupCitySkyline() {
+    const city = new THREE.Group();
+    for (let i = -12; i <= 12; i++) {
+      const bh = 25 + Math.random() * 45;
+      const bw = 7 + Math.random() * 9;
+      const bMat = new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x070b17 : 0x0b1021 });
+      (mapRefs.bld = mapRefs.bld || []).push([bMat, i % 2]);
+      const bMesh = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, 10), bMat);
+      bMesh.position.set(i * 11, bh / 2 - 6, -ROAD_LENGTH / 2 - 35);
+      city.add(bMesh);
+    }
+    scene.add(city);
+  }
+
+  function setupSpeedWarpLines() {
+    const pGeo = new THREE.BufferGeometry();
+    const count = 120;
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * ROAD_WIDTH * 1.6;
+      positions[i + 1] = 0.5 + Math.random() * 5;
+      positions[i + 2] = -Math.random() * ROAD_LENGTH;
+    }
+    pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const pMat = mapRefs.part = new THREE.PointsMaterial({ color: 0x00f0ff, size: 0.28, transparent: true, opacity: 0.6 });
+    speedParticles = new THREE.Points(pGeo, pMat);
+    scene.add(speedParticles);
+  }
+
+  // --- 5. TRAFFIC & PICKUPS ---
+  const CAR_COLORS = [0xffffff, 0x3b82f6, 0xf59e0b, 0x10b981, 0x8b5cf6, 0xec4899];
+
+  function setupTraffic() {
+    trafficCars.forEach(c => scene.remove(c));
+    trafficCars = [];
+    const initialCarCount = 3 + Math.min(3, currentLevel - 1);
+    for (let i = 0; i < initialCarCount; i++) {
+      const car = buildCarMesh(CAR_COLORS[i % CAR_COLORS.length], false);
+      resetTrafficCar(car, -60 - (i * 45));
+      scene.add(car);
+      trafficCars.push(car);
+    }
+
+    collectables.forEach(item => scene.remove(item));
+    collectables = [];
+    const types = ['coin', 'coin', 'nitro', 'shield', 'heart'];
+    types.forEach((type, idx) => {
+      const item = buildCollectable(type);
+      resetCollectable(item, -30 - (idx * 50));
+      scene.add(item);
+      collectables.push(item);
+    });
+  }
+
+  function resetTrafficCar(car, startZ = null) {
+    const laneIdx = Math.floor(Math.random() * LANES.length);
+    car.position.x = LANES[laneIdx];
+    car.position.y = 0;
+    car.position.z = startZ !== null ? startZ : -ROAD_LENGTH / 2 - (Math.random() * 50);
+    car.userData.speedFactor = 0.45 + (currentLevel * 0.08) + Math.random() * 0.2;
+    car.userData.passed = false;
+  }
+
+  function resetCollectable(item, startZ = null) {
+    const laneIdx = Math.floor(Math.random() * LANES.length);
+    item.position.x = LANES[laneIdx];
+    item.position.z = startZ !== null ? startZ : -ROAD_LENGTH / 2 - (Math.random() * 70);
+  }
+
+  // --- 6. NOTIFICATIONS & LEVELS ---
+  let popupT = null;
+  function showBanner(text, color = '#ffea00') {
+    popupEl.textContent = text;
+    popupEl.style.color = color;
+    popupEl.style.opacity = '1';
+    popupEl.style.transform = 'translate(-50%, -50%) scale(1.15)';
+    if (popupT) clearTimeout(popupT);
+    popupT = setTimeout(() => {
+      popupEl.style.opacity = '0';
+      popupEl.style.transform = 'translate(-50%, -50%) scale(0)';
+    }, 850);
+  }
+
+  function updateLivesDisplay() {
+    let hearts = '';
+    for (let i = 0; i < lives; i++) hearts += '❤️';
+    for (let i = lives; i < maxLives; i++) hearts += '🖤';
+    livesBox.textContent = hearts;
+  }
+
+  function checkLevelProgression() {
+    let newLevel = 1;
+    let label = 'LEVEL 1: BEGINNER';
+
+    if (score >= 4500) {
+      newLevel = 4;
+      label = 'LEVEL 4: MASTER';
+      baseCruisingSpeed = 160;
+      maxNitroSpeed = 250;
+    } else if (score >= 2200) {
+      newLevel = 3;
+      label = 'LEVEL 3: ADVANCED';
+      baseCruisingSpeed = 130;
+      maxNitroSpeed = 210;
+    } else if (score >= 800) {
+      newLevel = 2;
+      label = 'LEVEL 2: INTERMEDIATE';
+      baseCruisingSpeed = 100;
+      maxNitroSpeed = 180;
+    } else {
+      newLevel = 1;
+      label = 'LEVEL 1: BEGINNER';
+      baseCruisingSpeed = 75;
+      maxNitroSpeed = 145;
+    }
+
+    baseCruisingSpeed *= ST.speed;
+    maxNitroSpeed *= ST.speed;
+    minBrakeSpeed = 45 * ST.speed;
+
+    if (newLevel !== currentLevel) {
+      currentLevel = newLevel;
+      window.CHMeta.ev('level', newLevel);
+      levelBadge.textContent = label;
+      sound.playLevelUp();
+      showBanner(label + ' UNLOCKED!', '#00ff88');
+
+      if (trafficCars.length < 3 + currentLevel) {
+        const car = buildCarMesh(CAR_COLORS[trafficCars.length % CAR_COLORS.length], false);
+        resetTrafficCar(car);
+        scene.add(car);
+        trafficCars.push(car);
+      }
+    }
+  }
+
+  // --- 7. GAME LOOP ---
+  let prevTime = performance.now();
+
+  function loop() {
+    requestAnimationFrame(loop);
+    const now = performance.now();
+    const dt = Math.min((now - prevTime) / 1000, 0.1);
+    prevTime = now;
+
+    if (isPlaying && !isGameOver) {
+      updateDriving(dt);
+    }
+
+    collectables.forEach(c => { c.rotation.y += dt * 3.2; });
+
+    const wSpeed = (currentSpeed / 20) * dt;
+    if (playerCar && playerCar.userData.wheels) {
+      playerCar.userData.wheels.forEach(w => w.rotation.x += wSpeed);
+    }
+    trafficCars.forEach(tc => {
+      if (tc.userData.wheels) tc.userData.wheels.forEach(w => w.rotation.x += wSpeed * 0.75);
+    });
+
+    if (speedParticles && speedParticles.geometry) {
+      const pos = speedParticles.geometry.attributes.position.array;
+      const warpSpeed = (currentSpeed * 1.2) * dt;
+      for (let i = 2; i < pos.length; i += 3) {
+        pos[i] += warpSpeed;
+        if (pos[i] > 20) pos[i] -= ROAD_LENGTH;
+      }
+      speedParticles.geometry.attributes.position.needsUpdate = true;
+    }
+
+    if (invincibleTimer > 0) {
+      invincibleTimer -= dt;
+      playerCar.visible = (Math.floor(invincibleTimer * 10) % 2 === 0);
+      if (invincibleTimer <= 0) playerCar.visible = true;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  function updateDriving(dt) {
+    if (keys.nitro && nitroAmount > 5) {
+      targetSpeed = maxNitroSpeed;
+      isNitroActive = true;
+      nitroAmount = Math.max(0, nitroAmount - (dt * 26 / ST.nitro));
+      window.CHMeta.ev('nitro', dt);
+      sound.playNitro();
+    } else {
+      isNitroActive = false;
+      targetSpeed = keys.brake ? minBrakeSpeed : baseCruisingSpeed;
+      if (nitroAmount < MAX_NITRO) nitroAmount = Math.min(MAX_NITRO, nitroAmount + (dt * 8));
+    }
+
+    currentSpeed += (targetSpeed - currentSpeed) * (dt * 3.5);
+    const speedRatio = Math.max(0, (currentSpeed - minBrakeSpeed) / (maxNitroSpeed - minBrakeSpeed));
+
+    speedDisplay.textContent = Math.round(currentSpeed);
+    nitroBarInner.style.width = `${nitroAmount}%`;
+    vignetteEl.classList.toggle('nitro-on', isNitroActive);
+
+    sound.updateEngineSound(speedRatio, true);
+
+    const steerSpeed = 15.5 * dt;
+    let targetTilt = 0;
+    if (keys.left) {
+      targetPlayerX -= steerSpeed * 1.6 * ST.steer;
+      targetTilt = 0.2;
+    }
+    if (keys.right) {
+      targetPlayerX += steerSpeed * 1.6 * ST.steer;
+      targetTilt = -0.2;
+    }
+    targetPlayerX = Math.max(-ROAD_WIDTH / 2 + 1.6, Math.min(ROAD_WIDTH / 2 - 1.6, targetPlayerX));
+
+    playerX += (targetPlayerX - playerX) * (dt * 12);
+    carTilt += (targetTilt - carTilt) * (dt * 8);
+
+    playerCar.position.x = playerX;
+    playerCar.rotation.z = carTilt;
+    playerCar.rotation.y = -carTilt * 0.6;
+
+    camera.position.x += ((playerX * 0.42) - camera.position.x) * (dt * 8);
+    const desiredFOV = 62 + (speedRatio * 14);
+    camera.fov += (desiredFOV - camera.fov) * (dt * 4);
+    camera.updateProjectionMatrix();
+
+    const dz = (currentSpeed * 0.55) * dt;
+    score += Math.round(dz * 0.5 * ST.score);
+    if (weather) updateWeather(dt, dz);
+    scoreDisplay.textContent = score;
+
+    checkLevelProgression();
+
+    roadLines.forEach(l => {
+      l.position.z += dz;
+      if (l.position.z > 25) l.position.z -= ROAD_LENGTH;
+    });
+
+    roadLamps.forEach(lp => {
+      lp.position.z += dz;
+      if (lp.position.z > 25) lp.position.z -= ROAD_LENGTH;
+    });
+
+    if (shieldTimer > 0) {
+      shieldTimer -= dt;
+      shieldPill.style.display = 'block';
+      if (shieldTimer <= 0) shieldPill.style.display = 'none';
+    }
+
+    const pBox = new THREE.Box3().setFromObject(playerCar);
+    pBox.expandByScalar(-0.2);
+
+    trafficCars.forEach(car => {
+      const enemyDz = dz - ((currentSpeed * car.userData.speedFactor * 0.35) * dt);
+      car.position.z += enemyDz;
+
+      if (car.position.z > 25) resetTrafficCar(car);
+
+      if (!car.userData.passed && car.position.z > playerCar.position.z && car.position.z < playerCar.position.z + 3.8) {
+        const dx = Math.abs(car.position.x - playerCar.position.x);
+        if (dx < 3.2 && dx > 1.6) {
+          car.userData.passed = true;
+          score += 150;
+          nitroAmount = Math.min(MAX_NITRO, nitroAmount + 15);
+          sound.playCoin();
+          showBanner('SPEED OVERTAKE! +150', '#00f0ff');
+          window.CHMeta.ev('overtake');
+        }
+      }
+
+      const eBox = new THREE.Box3().setFromObject(car);
+      eBox.expandByScalar(-0.2);
+
+      if (pBox.intersectsBox(eBox)) {
+        if (shieldTimer > 0) {
+          resetTrafficCar(car);
+          sound.playHit();
+          showBanner('SHIELD SMASH! +200', '#00ff88');
+          window.CHMeta.ev('smash');
+          score += 200;
+        } else if (invincibleTimer <= 0) {
+          lives--;
+          updateLivesDisplay();
+          root.classList.add('cg-shake');
+          setTimeout(() => root.classList.remove('cg-shake'), 450);
+
+          if (lives > 0) {
+            sound.playHit();
+            invincibleTimer = 2.0;
+            currentSpeed = minBrakeSpeed;
+            resetTrafficCar(car);
+            showBanner(`-1 LIFE! (${lives} REMAINING)`, '#ff0055');
+          } else {
+            gameOver();
+          }
+        }
+      }
+    });
+
+    collectables.forEach(item => {
+      item.position.z += dz;
+      if (item.position.z > 25) resetCollectable(item);
+
+      if (playerCar.position.distanceTo(item.position) < 2.2) {
+        if (item.userData.type === 'coin') {
+          score += 250;
+          sound.playCoin();
+          showBanner('+250 GOLD COINS!  🪙+5', '#ffea00');
+          window.CHMeta.ev('coin');
+        } else if (item.userData.type === 'nitro') {
+          nitroAmount = MAX_NITRO;
+          sound.playNitro();
+          showBanner('NITRO 100% FULL!', '#00f0ff');
+        } else if (item.userData.type === 'shield') {
+          shieldTimer = 7.0;
+          sound.playCoin();
+          showBanner('SHIELD ACTIVE (7s)!', '#00ff88');
+        } else if (item.userData.type === 'heart') {
+          if (lives < maxLives) {
+            lives++;
+            updateLivesDisplay();
+            sound.playCoin();
+            showBanner('+1 EXTRA LIFE! ❤️', '#ff0055');
+          } else {
+            score += 300;
+            sound.playCoin();
+            showBanner('+300 BONUS!', '#00ff88');
+          }
+        }
+        resetCollectable(item);
+      }
+    });
+  }
+
+
+  // --- META: maps, weather, cars ---
+  let weatherPts = null;
+  function setupWeather() {
+    const g = new THREE.BufferGeometry();
+    const n = 900, p = new Float32Array(n * 3);
+    for (let i = 0; i < n * 3; i += 3) { p[i] = (Math.random() - 0.5) * 60; p[i + 1] = Math.random() * 30; p[i + 2] = -Math.random() * 140 + 15; }
+    g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+    weatherPts = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, transparent: true, opacity: 0.75, depthWrite: false }));
+    weatherPts.visible = false;
+    scene.add(weatherPts);
+  }
+  function updateWeather(dt, dz) {
+    const pos = weatherPts.geometry.attributes.position.array;
+    const fall = (weather === 'rain' ? 38 : 4) * dt;
+    const t = performance.now() * 0.001;
+    for (let i = 0; i < pos.length; i += 3) {
+      pos[i + 1] -= fall; pos[i + 2] += dz * 0.9;
+      if (weather === 'snow') pos[i] += Math.sin(t + i) * dt * 1.2;
+      if (pos[i + 1] < 0) pos[i + 1] += 30;
+      if (pos[i + 2] > 15) pos[i + 2] -= 140;
+    }
+    weatherPts.geometry.attributes.position.needsUpdate = true;
+  }
+  function applyMap() {
+    const M = window.CHMeta.MAPS[window.CHMeta.state.map] || window.CHMeta.MAPS.neon;
+    scene.background.setHex(M.bg); scene.fog.color.setHex(M.bg); scene.fog.density = M.fog;
+    mapRefs.road.color.setHex(M.road);
+    mapRefs.line.color.setHex(M.line);
+    mapRefs.rail.color.setHex(M.rail); mapRefs.rail.emissive.setHex(M.rail);
+    mapRefs.lamp.color.setHex(M.rail);
+    mapRefs.part.color.setHex(M.part);
+    mapRefs.hemi.color.setHex(M.sky); mapRefs.hemi.groundColor.setHex(M.ground);
+    mapRefs.amb.intensity = M.amb;
+    (mapRefs.bld || []).forEach(([m, k]) => m.color.setHex(M.bld[k]));
+    weather = M.weather;
+    weatherPts.visible = !!weather;
+    weatherPts.material.color.setHex(weather === 'rain' ? 0x9cc8ff : 0xffffff);
+    weatherPts.material.size = weather === 'rain' ? 0.18 : 0.35;
+  }
+  function applyCar() {
+    ST = window.CHMeta.stats();
+    selectedColor = ST.color;
+    if (playerChassisMat) playerChassisMat.color.set(selectedColor);
+    if (playerUnderglow) playerUnderglow.material.color.set(selectedColor);
+    playerCar.scale.set(ST.scale[0], ST.scale[1], ST.scale[2]);
+    document.querySelectorAll('.cg-dot').forEach(d => d.classList.toggle('selected', d.getAttribute('data-color') === selectedColor));
+  }
+  window.CHCore = { applyMap, applyCar };
+  window.CHMeta.setToast((t, c) => showBanner(t, c));
+
+  // --- 8. GAME OVER & RESTART ---
+  function gameOver() {
+    isGameOver = true;
+    isPlaying = false;
+    sound.playCrash();
+    sound.stopBGM();
+    sound.updateEngineSound(0, false);
+
+    root.classList.add('cg-shake');
+    setTimeout(() => root.classList.remove('cg-shake'), 450);
+
+    if (score > highscore) {
+      highscore = score;
+      localStorage.setItem('cyber_horizon_highscore', highscore);
+      highDisplay.textContent = highscore;
+      document.getElementById('cg-gameover-sub').textContent = 'NEW HIGH SCORE!';
+      document.getElementById('cg-gameover-sub').style.color = '#ffea00';
+    } else {
+      document.getElementById('cg-gameover-sub').textContent = 'Traffic speeds up as you advance!';
+      document.getElementById('cg-gameover-sub').style.color = '#94a3b8';
+    }
+
+    finalScoreDisplay.textContent = score;
+    const earned = window.CHMeta.raceEnd(score, currentLevel);
+    document.getElementById('ch-earned').textContent = '+' + earned.toLocaleString() + ' 🪙 coins earned';
+    setTimeout(() => {
+      gameoverOverlay.classList.remove('cg-hidden');
+    }, 500);
+  }
+
+  function restart() {
+    document.getElementById('ch-panel').classList.remove('open');
+    applyCar();
+    applyMap();
+    window.CHMeta.raceStart();
+    maxLives = ST.lives;
+    score = 0;
+    lives = maxLives;
+    currentLevel = 1;
+    invincibleTimer = 0;
+    playerCar.visible = true;
+    updateLivesDisplay();
+    levelBadge.textContent = 'LEVEL 1: BEGINNER';
+
+    nitroAmount = 100;
+    shieldTimer = ST.shield;
+    shieldPill.style.display = ST.shield > 0 ? 'block' : 'none';
+
+    baseCruisingSpeed = 75 * ST.speed;
+    maxNitroSpeed = 145 * ST.speed;
+    currentSpeed = baseCruisingSpeed;
+
+    playerX = 0;
+    targetPlayerX = 0;
+    carTilt = 0;
+    playerCar.position.set(0, 0, 0);
+    playerCar.rotation.set(0, 0, 0);
+    camera.position.set(0, 4.3, 7.8);
+
+    scoreDisplay.textContent = '0';
+    setupTraffic();
+
+    gameoverOverlay.classList.add('cg-hidden');
+    startOverlay.classList.add('cg-hidden');
+
+    isGameOver = false;
+    isPlaying = true;
+
+    sound.init();
+    sound.startBGM();
+
+    if (document.body.classList.contains('cg-touch')) {
+      const hint = document.getElementById('cg-steer-hint');
+      hint.classList.add('show');
+      clearTimeout(restart.hintT);
+      restart.hintT = setTimeout(() => hint.classList.remove('show'), 2500);
+    }
+
+    requestGameFullscreen();
+  }
+
+  // --- 9. FULLSCREEN HELPER ---
+  function requestGameFullscreen() {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+    }
+  }
+
+  // --- 10. EVENT LISTENERS ---
+  window.addEventListener('keydown', e => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
+    const k = e.key.toLowerCase();
+    if (k === 'arrowleft' || k === 'a') keys.left = true;
+    if (k === 'arrowright' || k === 'd') keys.right = true;
+    if (k === 'arrowup' || k === 'w' || k === ' ') keys.nitro = true;
+    if (k === 'arrowdown' || k === 's') keys.brake = true;
+  });
+
+  window.addEventListener('keyup', e => {
+    const k = e.key.toLowerCase();
+    if (k === 'arrowleft' || k === 'a') keys.left = false;
+    if (k === 'arrowright' || k === 'd') keys.right = false;
+    if (k === 'arrowup' || k === 'w' || k === ' ') keys.nitro = false;
+    if (k === 'arrowdown' || k === 's') keys.brake = false;
+  });
+
+  function bindBtn(id, prop) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const start = (e) => { e.preventDefault(); keys[prop] = true; el.classList.add('active-touch'); };
+    const stop = (e) => { e.preventDefault(); keys[prop] = false; el.classList.remove('active-touch'); };
+    el.addEventListener('touchstart', start, { passive: false });
+    el.addEventListener('touchend', stop, { passive: false });
+    el.addEventListener('mousedown', start);
+    el.addEventListener('mouseup', stop);
+    el.addEventListener('touchcancel', stop, { passive: false });
+    el.addEventListener('mouseleave', stop);
+    el.addEventListener('contextmenu', e => e.preventDefault());
+  }
+
+  bindBtn('cg-zone-left', 'left');
+  bindBtn('cg-zone-right', 'right');
+  bindBtn('cg-btn-left', 'left');
+  bindBtn('cg-btn-right', 'right');
+  bindBtn('cg-btn-nitro', 'nitro');
+  bindBtn('cg-btn-brake', 'brake');
+
+  document.querySelectorAll('.cg-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      document.querySelectorAll('.cg-dot').forEach(d => d.classList.remove('selected'));
+      dot.classList.add('selected');
+      selectedColor = dot.getAttribute('data-color');
+      if (playerChassisMat) playerChassisMat.color.set(selectedColor);
+      if (playerUnderglow) playerUnderglow.material.color.set(selectedColor);
+    });
+  });
+
+  btnStart.addEventListener('click', () => { sound.init(); restart(); });
+  btnRestart.addEventListener('click', () => { restart(); });
+
+  btnMute.addEventListener('click', () => {
+    sound.init();
+    const state = sound.toggle();
+    muteIcon.innerHTML = state ? '&#128266;' : '&#128263;';
+  });
+
+  btnFs.addEventListener('click', () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      requestGameFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  });
+
+  function handleResize() {
+    fitAppHeight();
+    const w = root.clientWidth || window.innerWidth;
+    const h = root.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+
+  init();
+  loop();
+
+})();
+    </script>
+    
+    <script async data-cfasync="false" src="https://bicea.org/14/e086d90fb09647eb1a3a223584e66262"></script>
+  </body>
+</html>
